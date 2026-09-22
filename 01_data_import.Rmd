@@ -2,3 +2,52 @@
 title: "Data Import"
 output: html_document
 ---
+
+This file is for doing data import. 
+
+```{r}
+library(tidyverse)
+```
+# Import 2 CSVs
+
+Import our first dataset.
+
+```{r}
+litters_df =
+  read_csv(file = "data/FAS_litters.csv")
+
+# Issue 1: NAs and . used to indicate missing values. below makes col names snake case.
+
+litters_df = janitor::clean_names(litters_df) # :: allows us to use pieces of packages (Ex janitor) w/o install/library
+```
+
+Import second dataset. Issue 1: Frist 3 rows irrelevant. use skip
+
+```{r}
+pups_df =
+  read.csv(file = "data/FAS_pups.csv", skip = 3)
+
+pups_df = janitor::clean_names(pups_df)
+```
+
+## Look at the data
+
+```{r}
+litters_df
+pups_df
+```
+
+Head or tail
+
+```{r}
+head(litters_df, 20)
+tail(pups_df, 5)
+```
+Skimming?
+
+```{r}
+skimr::skim(pups_df)
+```
+
+
+
