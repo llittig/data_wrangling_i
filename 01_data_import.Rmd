@@ -108,3 +108,14 @@ pulse_df = janitor::clean_names(pulse_df)
 # BDI scale for depression, higher values = dep.
 ```
 
+## What's so bad about 'read.csv()'
+
+Import pups with 'read.csv()'
+
+```{r}
+pups_df_base =
+  read.csv("data/FAS_pups.csv")
+
+pups_df_base
+```
+Won't show: lazy about variable names; syper slow for big dataset.
