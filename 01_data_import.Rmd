@@ -14,9 +14,11 @@ Import our first dataset.
 
 ```{r}
 litters_df =
-  read_csv(file = "data/FAS_litters.csv")
+  read_csv(file = "data/FAS_litters.csv",
+           na = c("", ".", "NA")
+  )
 
-# Issue 1: NAs and . used to indicate missing values. below makes col names snake case.
+# Issue 1: NAs and . used to indicate missing values. Fixed above. Below makes col names snake case.
 
 litters_df = janitor::clean_names(litters_df) # :: allows us to use pieces of packages (Ex janitor) w/o install/library
 ```
@@ -25,7 +27,10 @@ Import second dataset. Issue 1: Frist 3 rows irrelevant. use skip
 
 ```{r}
 pups_df =
-  read.csv(file = "data/FAS_pups.csv", skip = 3)
+  read.csv(
+    file = "data/FAS_pups.csv", 
+    skip = 3,
+    na = c("", ".", "NA"))
 
 pups_df = janitor::clean_names(pups_df)
 ```
