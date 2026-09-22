@@ -365,7 +365,8 @@ display: none;
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<pre class="r"><code>library(readxl)</code></pre>
+<pre class="r"><code>library(readxl)
+library(haven)</code></pre>
 <div id="import-2-csvs" class="section level1">
 <h1>Import 2 CSVs</h1>
 <p>Import our first dataset.</p>
@@ -972,6 +973,16 @@ pups_df = janitor::clean_names(pups_df)</code></pre>
     &quot;data/LotR_Words.xlsx&quot;,
     range = &quot;F3:H6&quot;
   )</code></pre>
+</div>
+<div id="import-sas" class="section level2">
+<h2>Import SAS</h2>
+<p>Read in the PULSE dataset</p>
+<pre class="r"><code>pulse_df =
+  read_sas(&quot;data/public_pulse_data.sas7bdat&quot;)
+
+pulse_df = janitor::clean_names(pulse_df)
+
+# BDI scale for depression, higher values = dep.</code></pre>
 </div>
 </div>
 
