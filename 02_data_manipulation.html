@@ -1432,6 +1432,101 @@ walk</p>
 ## # ℹ 39 more rows
 ## # ℹ 2 more variables: pups_dead_birth &lt;dbl&gt;, pups_survive &lt;dbl&gt;</code></pre>
 </div>
+<div id="do-multiple-steps" class="section level2">
+<h2>Do multiple steps…</h2>
+<p>This is bad:</p>
+<pre class="r"><code>litters_df = read_csv(&quot;data/FAS_litters.csv&quot;, na = c(&quot;&quot;, &quot;NA&quot;, &quot;.&quot;))</code></pre>
+<pre><code>## Rows: 49 Columns: 8
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): Group, Litter Number
+## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>litters_rename_df = janitor::clean_names(litters_df)
+litters_with_gd_df = select(litters_rename_df, group, starts_with(&quot;gd&quot;))
+litters_no_na_df = drop_na(litters_with_gd_df)
+litters_wt_gain_df = mutate(litters_no_na_df, wt_gain = gd18_weight - gd0_weight)</code></pre>
+<p>This is worse:</p>
+<p>This is good:</p>
+<pre class="r"><code>litters_df =
+  read_csv(&quot;data/FAS_litters.csv&quot;, na = c(&quot;&quot;, &quot;NA&quot;, &quot;.&quot;)) |&gt;
+  janitor::clean_names() |&gt;
+  select(group, starts_with(&quot;gd&quot;)) |&gt;
+  drop_na() |&gt;
+  mutate(
+  wt_gain = gd18_weight - gd0_weight,
+  group = str_to_lower(group)
+  )</code></pre>
+<pre><code>## Rows: 49 Columns: 8
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): Group, Litter Number
+## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>Load pups, clean names, drop missing, keep litter number and pd
+variables, add pd walk -7</p>
+<pre class="r"><code>pups_df =
+  read.csv(&quot;data/FAS_pups.csv&quot;, skip = 3, na = c(&quot;&quot;, &quot;.&quot;, &quot;NA&quot;)) |&gt;
+  janitor::clean_names() |&gt;
+  drop_na() |&gt;
+  select(litter_number, starts_with(&quot;pd&quot;)) |&gt;
+  mutate(pd_walk_minus_7 = pd_walk - 7)</code></pre>
+<p>Sometimes the first thing isn’t a dataframe</p>
+<pre class="r"><code>litters_df |&gt;
+  filter(group %in% c(&quot;con7&quot;, &quot;con8&quot;)) |&gt;
+  lm(gd18_weight ~ gd0_weight, data = _)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gd18_weight ~ gd0_weight, data = filter(litters_df, 
+##     group %in% c(&quot;con7&quot;, &quot;con8&quot;)))
+## 
+## Coefficients:
+## (Intercept)   gd0_weight  
+##      14.013        1.049</code></pre>
+<p><code>select</code> vs <code>pull</code></p>
+<pre class="r"><code>litters_df |&gt;
+  select(group)</code></pre>
+<pre><code>## # A tibble: 31 × 1
+##    group
+##    &lt;chr&gt;
+##  1 con7 
+##  2 con7 
+##  3 con7 
+##  4 con7 
+##  5 mod7 
+##  6 mod7 
+##  7 mod7 
+##  8 mod7 
+##  9 mod7 
+## 10 mod7 
+## # ℹ 21 more rows</code></pre>
+<pre class="r"><code>litters_df |&gt;
+  pull(group)</code></pre>
+<pre><code>##  [1] &quot;con7&quot; &quot;con7&quot; &quot;con7&quot; &quot;con7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot;
+## [11] &quot;mod7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;mod8&quot;
+## [21] &quot;mod8&quot; &quot;mod8&quot; &quot;mod8&quot; &quot;mod8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot;
+## [31] &quot;low8&quot;</code></pre>
+<p>never do <code>$</code></p>
+<pre class="r"><code>litters_df$group</code></pre>
+<pre><code>##  [1] &quot;con7&quot; &quot;con7&quot; &quot;con7&quot; &quot;con7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot; &quot;mod7&quot;
+## [11] &quot;mod7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;low7&quot; &quot;mod8&quot;
+## [21] &quot;mod8&quot; &quot;mod8&quot; &quot;mod8&quot; &quot;mod8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot; &quot;low8&quot;
+## [31] &quot;low8&quot;</code></pre>
+<p>pipes and viewing</p>
+<pre class="r"><code>litters_df |&gt;
+  filter(group %in% c(&quot;con7&quot;, &quot;con8&quot;)) #delete view() after bc pop ups are annoying</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   group gd0_weight gd18_weight gd_of_birth wt_gain
+##   &lt;chr&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
+## 1 con7        19.7        34.7          20    15  
+## 2 con7        27          42            19    15  
+## 3 con7        26          41.4          19    15.4
+## 4 con7        28.5        44.1          19    15.6</code></pre>
+</div>
 
 
 
