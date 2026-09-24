@@ -1,0 +1,61 @@
+---
+title: "Data Manipulation"
+output: html_document
+---
+
+This file is for doing data manipulation.
+
+```{r}
+library(tidyverse)
+```
+
+Load the litters and pups datasets.
+
+```{r}
+litters_df =
+  read_csv(
+    "data/FAS_litters.csv",
+           na = c("", ".", "NA"))
+
+
+litters_df = janitor::clean_names(litters_df)
+
+pups_df =
+  read.csv(
+    "data/FAS_pups.csv", 
+    skip = 3,
+    na = c("", ".", "NA"))
+
+pups_df = janitor::clean_names(pups_df)
+```
+## `select` some variables
+
+```{r}
+select(litters_df, group, litter_number)
+
+select(litters_df, group:gd_of_birth)
+
+select(litters_df, -group)
+
+select(litters_df, starts_with("gd"))
+       
+select(litters_df, starts_with("gd"), group)
+
+select(litters_df, GROUP = group, everything()) # G = g renames that variable. everything else stays same
+
+select(litters_df, -starts_with("gd"))
+```
+a couple alternatives
+
+```{r}
+rename(litters_df, GROUP = group)
+
+relocate(litters_df, litter_number) # moves var to front
+```
+
+In the pups data, select litter number, sex, and PD ears.
+
+```{r}
+select(pups_df, litter_number, sex, pd_ears)
+```
+
