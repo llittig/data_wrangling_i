@@ -111,4 +111,25 @@ lotr_df =
   )
 ```
 
+## Join FAS datasets
+
+import both
+
+```{r}
+pups_df =
+  read_csv(
+    "data/FAS_pups.csv",
+    skip = 3,
+    na = c(".", "", "NA")) |>
+  janitor::clean_names()
+
+litters_df =
+  read_csv(
+    "data/FAS_litters.csv",
+    na = c(".", "", "NA")) |>
+  janitor::clean_names()
+
+fas_df =
+  left_join(pups_df, litters_df, by = "litter_number")
+```
 
