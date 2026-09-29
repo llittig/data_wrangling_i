@@ -84,6 +84,7 @@ mutate(
   wt_gain = gd18_weight - gd0_weight,
   wt_gain_squared = wt_gain ^ 2,
   group = str_to_lower(group))
+
 #wt_gain is new var created by this function
 ```
 
